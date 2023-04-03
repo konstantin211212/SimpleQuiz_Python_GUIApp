@@ -5,16 +5,37 @@ class QuestProcess:
     def __init__(self):
         # загружаем данные из json файла
         with open("questions.json", encoding="UTF-8") as file:
-            data = json.load(file)
+            self.data = json.load(file)
+
+        self.count_quizes = len(self.data)
 
         # сохраняем вопросы, варианты ответов и номера верных ответов
-        self.question = data["question"]
-        self.options = data["options"]
-        self.answer = data["answer"]
+        self.question = None
+        self.options = None
+        self.answer = None
 
         self.number_question = -1
-        self.question_limit = len(self.question)
+        self.question_limit = 0 #len(self.question)
         self.selected_answer = None
+
+    def load_list_quize(self):
+        list_quize = []
+        for i in range(1, self.count_quizes + 1):
+            list_quize.append(self.data[f'quiz_{i}']["name"])
+        return list_quize
+
+    def load_quize(self, name_quize):
+        index = 0
+        for i in range(1, self.count_quizes + 1):
+            if self.data[f'quiz_{i}']['name'] == name_quize:
+                index = i
+                break
+
+        # сохраняем вопросы, варианты ответов и номера верных ответов
+        self.question = self.data[f'quiz_{index}']["question"]
+        self.options = self.data[f'quiz_{index}']["options"]
+        self.answer = self.data[f'quiz_{index}']["answer"]
+        self.question_limit = len(self.question)
 
     def get_question(self):
         """Возвращает кортеж из 3-х элементов:
@@ -36,3 +57,7 @@ class QuestProcess:
             return True
         else:
             return False
+
+    def reset_quiz(self):
+        self.number_question = -1
+        pass

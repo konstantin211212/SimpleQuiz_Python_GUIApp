@@ -6,7 +6,7 @@ An example of a simple quiz application in Python using CustomTrinter.
 ## Функционал:
 - Загрузка вопросов, вариантов и ответов из файла json
 - Вывод вопросов и вариантов на форму 
-- ToDo: Вывод изображения для вопроса
+- Вывод изображения для вопроса
 - ToDo: Валидация ответов
 - Подсчет статистики
 - ToDo: Публикация статистики на сервер
@@ -15,7 +15,7 @@ An example of a simple quiz application in Python using CustomTrinter.
 ## Functionality:
 - Loading questions, options and answers from a json file
 - Conclusion of questions and options on the form
-- ToDo: Show question image
+- Show question image
 - ToDo: Answer Validation
 - Calculate statistics
 - ToDo: Publish statistics to the server

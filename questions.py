@@ -15,26 +15,27 @@ class QuestProcess:
         self.answer = None
 
         self.number_question = -1
-        self.question_limit = 0 #len(self.question)
+        self.question_limit = 0  # len(self.question)
         self.selected_answer = None
+        self.statistics = [0, 0]
 
     def load_list_quize(self):
         list_quize = []
         for i in range(1, self.count_quizes + 1):
-            list_quize.append(self.data[f'quiz_{i}']["name"])
+            list_quize.append(self.data[f"quiz_{i}"]["name"])
         return list_quize
 
     def load_quize(self, name_quize):
         index = 0
         for i in range(1, self.count_quizes + 1):
-            if self.data[f'quiz_{i}']['name'] == name_quize:
+            if self.data[f"quiz_{i}"]["name"] == name_quize:
                 index = i
                 break
 
         # сохраняем вопросы, варианты ответов и номера верных ответов
-        self.question = self.data[f'quiz_{index}']["question"]
-        self.options = self.data[f'quiz_{index}']["options"]
-        self.answer = self.data[f'quiz_{index}']["answer"]
+        self.question = self.data[f"quiz_{index}"]["question"]
+        self.options = self.data[f"quiz_{index}"]["options"]
+        self.answer = self.data[f"quiz_{index}"]["answer"]
         self.question_limit = len(self.question)
 
     def get_question(self):
@@ -60,4 +61,20 @@ class QuestProcess:
 
     def reset_quiz(self):
         self.number_question = -1
+        self.statistics = [0, 0]
         pass
+
+    def check_answer(self):
+        print(
+            "Checke answer = ",
+            self.options[self.number_question][self.answer[self.number_question] - 1],
+        )
+        if (
+            self.selected_answer
+            == self.options[self.number_question][self.answer[self.number_question] - 1]
+        ):
+            print(True)
+            self.statistics[0] += 1
+        else:
+            self.statistics[1] += 1
+            print(False)

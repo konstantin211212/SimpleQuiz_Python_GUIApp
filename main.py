@@ -26,6 +26,7 @@ class QuizApp(CTk.CTk):
         self.answer_buttons = []
 
         self.init_questions_json()
+        self.init_result_frame()
         self.init_main_frame()
         self.init_select_quiz_frame()
         self.init_quiz_frame()
@@ -41,7 +42,9 @@ class QuizApp(CTk.CTk):
         )
 
         self.start_button = CTk.CTkButton(
-            master=self.main_frame, text="Начать", command=self.open_select_quiz # old: self.start_quiz
+            master=self.main_frame,
+            text="Начать",
+            command=self.open_select_quiz,  # old: self.start_quiz
         )
         self.start_button.grid(row=0, column=0, pady=(30, 30))
 
@@ -141,7 +144,7 @@ class QuizApp(CTk.CTk):
         self.next_button = CTk.CTkButton(
             master=self.quize_frame,
             text="Дальше",
-            command=self.check_answer,
+            command=self.to_next_question,
             fg_color="gray",
         )
         self.next_button.grid(row=3, column=0, pady=(20, 0))
@@ -154,7 +157,7 @@ class QuizApp(CTk.CTk):
         )
         self.exit_to_main_button.grid(row=4, column=0, pady=(40, 0))
 
-        self.set_quest_and_answer()
+        # self.set_quest_and_answer()
 
     def init_select_quiz_frame(self):
         """Создаем фрейм викторины с вопросом и кнопками выбора ответа"""
@@ -168,8 +171,12 @@ class QuizApp(CTk.CTk):
         quizes = self.quest_processor.load_list_quize()
         select_button = []
         for i in range(len(quizes)):
-            select_button.append(CTk.CTkButton(master=self.select_quize_frame, text=quizes[i]))
-            select_button[i].configure(command=lambda x=select_button[i]: self.start_quiz(x))
+            select_button.append(
+                CTk.CTkButton(master=self.select_quize_frame, text=quizes[i])
+            )
+            select_button[i].configure(
+                command=lambda x=select_button[i]: self.start_quiz(x)
+            )
             select_button[i].grid(row=i, column=0, pady=(20, 20))
 
     def init_questions_json(self):
@@ -186,28 +193,32 @@ class QuizApp(CTk.CTk):
             self.answer_4_button.configure(text=options[3])
 
         else:
-            print('Не могу выдать вопрос')
+            self.open_result()
+            print("Не могу выдать вопрос")
             pass
             # ToDo: Создать фрейм вывода результатов
             # self.question_label.configure(text="Вопросы закончились!")
 
-    def check_answer(self):
+    def to_next_question(self):
+        """Вызывается next_button, переход к ледующему вопросу и проверка ответа текущего"""
         if self.quest_processor.selected_answer:
+            self.quest_processor.check_answer()
             self.set_quest_and_answer()
             self.reset_color_answer_buttons()
+        else:
+            self.open_result()
 
     def reset_color_answer_buttons(self):
         for button in self.answer_buttons:
             button.configure(fg_color=("#3B8ED0", "#1F6AA5"))
 
     def start_quiz(self, name_quiz):
-        print(name_quiz.cget('text'))
+        print(name_quiz.cget("text"))
         self.select_quize_frame.grid_forget()
         self.quize_frame.grid(row=1, column=0, padx=(20, 20), sticky="NSEW")
-        self.current_quize_name = name_quiz.cget('text')
+        self.current_quize_name = name_quiz.cget("text")
         self.quest_processor.load_quize(self.current_quize_name)
         self.set_quest_and_answer()
-
 
     def select_answer(self, text, button):
         if self.old_answer_button:
@@ -222,6 +233,7 @@ class QuizApp(CTk.CTk):
             row=1, column=0, padx=(20, 20), pady=(100, 100), sticky="NSEW"
         )
         self.quize_frame.grid_forget()
+        self.result_frame.grid_forget()
         self.quest_processor.reset_quiz()
 
     def open_setting(self):
@@ -230,6 +242,37 @@ class QuizApp(CTk.CTk):
     def open_select_quiz(self):
         self.main_frame.grid_forget()
         self.select_quize_frame.grid(row=1, column=0)
+
+    def init_result_frame(self):
+        """Создаем фрейм результатов"""
+        self.result_frame = CTk.CTkFrame(master=self, fg_color="transparent")
+        self.result_frame.grid(row=1, column=0, padx=(20, 20), sticky="NSEW")
+        self.result_frame.grid_anchor(
+            "center"  # Вырваниваем все элементы внутри фрейма по центру
+        )
+        self.result_frame.grid_forget()
+
+        self.result_label = CTk.CTkLabel(
+            master=self.result_frame,
+            text=f"Ваш результат:{self.quest_processor.statistics[0]} из {sum(self.quest_processor.statistics)}",
+            font=(CTk.CTkFont(size=20)),
+        )
+        self.result_label.grid(row=0, column=0)
+
+        self.exit_to_main_button = CTk.CTkButton(
+            master=self.result_frame,
+            text="Выйти в меню",
+            command=self.open_main,
+            fg_color="black",
+        )
+        self.exit_to_main_button.grid(row=4, column=0, pady=(40, 0))
+
+    def open_result(self):
+        self.quize_frame.grid_forget()
+        self.result_label.configure(
+            text=f"Ваш результат:{self.quest_processor.statistics[0]} из {sum(self.quest_processor.statistics)}"
+        )
+        self.result_frame.grid(row=1, column=0)
 
 
 if __name__ == "__main__":

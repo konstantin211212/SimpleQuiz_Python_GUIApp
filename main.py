@@ -9,6 +9,7 @@ class QuizApp(CTk.CTk):
     def __init__(self):
         super().__init__()
 
+        self.current_quiz_name = None
         self.old_answer_button = None
         self.width, self.height = 800, 600
         self.geometry(f"{self.width}x{self.height}")  # Задаем размеры окна
@@ -75,14 +76,14 @@ class QuizApp(CTk.CTk):
         self.question_image = CTk.CTkImage(
             dark_image=Image.open("Images/QuestionsImage/1.gif"), size=(100, 100)
         )
-        self.question_image = CTk.CTkLabel(
+        self.question_image_label = CTk.CTkLabel(
             master=self.quize_frame,
             text="",
             image=self.question_image,
             width=self.width,
             height=150,
         )
-        self.question_image.grid_forget()
+        self.question_image_label.grid_forget()
 
         self.answers_frame = CTk.CTkFrame(
             master=self.quize_frame, fg_color="transparent"
@@ -168,7 +169,7 @@ class QuizApp(CTk.CTk):
         )
         self.select_quize_frame.grid_forget()
 
-        quizes = self.quest_processor.load_list_quize()
+        quizes = self.quest_processor.load_list_quiz()
         select_button = []
         for i in range(len(quizes)):
             select_button.append(
@@ -185,12 +186,16 @@ class QuizApp(CTk.CTk):
     def set_quest_and_answer(self):
         if self.quest_processor.can_get_question():
             self.quest_processor.selected_answer = None
-            quest, options, answer = self.quest_processor.get_question()
+            quest, options, answer, image = self.quest_processor.get_question()
             self.question_label.configure(text=quest)
             self.answer_1_button.configure(text=options[0])
             self.answer_2_button.configure(text=options[1])
             self.answer_3_button.configure(text=options[2])
             self.answer_4_button.configure(text=options[3])
+            if image:
+                self.question_image_label.grid(row=1, column=0)
+            else:
+                self.question_image_label.grid_forget()
 
         else:
             self.open_result()
@@ -205,8 +210,10 @@ class QuizApp(CTk.CTk):
             self.quest_processor.check_answer()
             self.set_quest_and_answer()
             self.reset_color_answer_buttons()
-        else:
+        elif not self.quest_processor.can_get_question():
             self.open_result()
+        else:
+            pass
 
     def reset_color_answer_buttons(self):
         for button in self.answer_buttons:
@@ -216,8 +223,8 @@ class QuizApp(CTk.CTk):
         print(name_quiz.cget("text"))
         self.select_quize_frame.grid_forget()
         self.quize_frame.grid(row=1, column=0, padx=(20, 20), sticky="NSEW")
-        self.current_quize_name = name_quiz.cget("text")
-        self.quest_processor.load_quize(self.current_quize_name)
+        self.current_quiz_name = name_quiz.cget("text")
+        self.quest_processor.load_quiz(self.current_quiz_name)
         self.set_quest_and_answer()
 
     def select_answer(self, text, button):

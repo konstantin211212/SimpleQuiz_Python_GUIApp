@@ -8,7 +8,7 @@ An example of a simple quiz application in Python using CustomTrinter.
 - Вывод вопросов и вариантов на форму 
 - ToDo: Вывод изображения для вопроса
 - ToDo: Валидация ответов
-- ToDo: Подсчет статистики
+- Подсчет статистики
 - ToDo: Публикация статистики на сервер
 - ToDo: Меню с настройками стиля
 
@@ -17,6 +17,6 @@ An example of a simple quiz application in Python using CustomTrinter.
 - Conclusion of questions and options on the form
 - ToDo: Show question image
 - ToDo: Answer Validation
-- ToDo: Calculate statistics
+- Calculate statistics
 - ToDo: Publish statistics to the server
 - ToDo: Menu with style settings

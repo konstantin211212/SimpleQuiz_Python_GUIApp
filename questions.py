@@ -18,17 +18,18 @@ class QuestProcess:
         self.question_limit = 0  # len(self.question)
         self.selected_answer = None
         self.statistics = [0, 0]
+        self.images = None
 
-    def load_list_quize(self):
-        list_quize = []
+    def load_list_quiz(self):
+        list_quiz = []
         for i in range(1, self.count_quizes + 1):
-            list_quize.append(self.data[f"quiz_{i}"]["name"])
-        return list_quize
+            list_quiz.append(self.data[f"quiz_{i}"]["name"])
+        return list_quiz
 
-    def load_quize(self, name_quize):
+    def load_quiz(self, name_quiz):
         index = 0
         for i in range(1, self.count_quizes + 1):
-            if self.data[f"quiz_{i}"]["name"] == name_quize:
+            if self.data[f"quiz_{i}"]["name"] == name_quiz:
                 index = i
                 break
 
@@ -36,22 +37,31 @@ class QuestProcess:
         self.question = self.data[f"quiz_{index}"]["question"]
         self.options = self.data[f"quiz_{index}"]["options"]
         self.answer = self.data[f"quiz_{index}"]["answer"]
+        self.images = self.data[f"quiz_{index}"]["images"]
         self.question_limit = len(self.question)
 
     def get_question(self):
         """Возвращает кортеж из 3-х элементов:
         Вопрос -> Str
         Ответы -> List
-        Номер верного варианта -> Int"""
+        Номер верного варианта -> Int
+        Изображение при наличии -> Str"""
         if self.can_get_question():
             self.number_question += 1
             return (
                 self.question[self.number_question],
                 self.options[self.number_question],
                 self.answer[self.number_question],
+                self.get_image(),
             )
         else:
             return 0
+
+    def get_image(self):
+        if len(self.images) - 1 >= self.number_question:
+            return self.images[self.number_question]
+        else:
+            return ""
 
     def can_get_question(self):
         if self.question_limit > self.number_question + 1:

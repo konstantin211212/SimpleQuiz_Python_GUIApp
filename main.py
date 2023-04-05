@@ -74,7 +74,7 @@ class QuizApp(CTk.CTk):
         self.question_label.grid(row=0, column=0)
 
         self.question_image = CTk.CTkImage(
-            dark_image=Image.open("Images/QuestionsImage/1.gif"), size=(100, 100)
+            dark_image=Image.open("Images/Logo.png"), size=(100, 100)
         )
         self.question_image_label = CTk.CTkLabel(
             master=self.quize_frame,
@@ -194,6 +194,10 @@ class QuizApp(CTk.CTk):
             self.answer_4_button.configure(text=options[3])
             if image:
                 self.question_image_label.grid(row=1, column=0)
+                self.question_image.configure(
+                    dark_image=Image.open(f"Images/QuestionsImage/{image}")
+                )
+                print(image)
             else:
                 self.question_image_label.grid_forget()
 

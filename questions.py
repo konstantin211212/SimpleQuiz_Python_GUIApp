@@ -88,3 +88,6 @@ class QuestProcess:
         else:
             self.statistics[1] += 1
             print(False)
+
+    def save_statistic_with_profile(self):
+        pass

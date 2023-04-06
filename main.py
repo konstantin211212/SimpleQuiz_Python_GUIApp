@@ -1,6 +1,7 @@
 import customtkinter as CTk
 from PIL import Image
 from questions import QuestProcess
+import tkinter
 
 
 class QuizApp(CTk.CTk):
@@ -31,6 +32,7 @@ class QuizApp(CTk.CTk):
         self.init_main_frame()
         self.init_select_quiz_frame()
         self.init_quiz_frame()
+        self.init_setting_frame()
 
     def init_main_frame(self):
         """Создаем главный фрейм с кнопками управления"""
@@ -184,6 +186,67 @@ class QuizApp(CTk.CTk):
         """Создание класса-обработчика для вопросов из json файла"""
         self.quest_processor = QuestProcess()
 
+    def init_result_frame(self):
+        """Создаем фрейм результатов"""
+        self.result_frame = CTk.CTkFrame(master=self, fg_color="transparent")
+        self.result_frame.grid(row=1, column=0, padx=(20, 20), sticky="NSEW")
+        self.result_frame.grid_anchor(
+            "center"  # Вырваниваем все элементы внутри фрейма по центру
+        )
+        self.result_frame.grid_forget()
+
+        self.result_label = CTk.CTkLabel(
+            master=self.result_frame,
+            text=f"Ваш результат:{self.quest_processor.statistics[0]} из {sum(self.quest_processor.statistics)}",
+            font=(CTk.CTkFont(size=20)),
+        )
+        self.result_label.grid(row=0, column=0)
+
+        self.exit_to_main_button = CTk.CTkButton(
+            master=self.result_frame,
+            text="Выйти в меню",
+            command=self.open_main,
+            fg_color="black",
+        )
+        self.exit_to_main_button.grid(row=4, column=0, pady=(40, 0))
+
+    def init_setting_frame(self):
+        """Создаем фрейм настроек"""
+        self.setting_frame = CTk.CTkFrame(master=self, fg_color="transparent")
+        self.setting_frame.grid(row=1, column=0, padx=(20, 20), sticky="NSEW")
+        self.setting_frame.grid_anchor(
+            "center"  # Вырваниваем все элементы внутри фрейма по центру
+        )
+        self.setting_frame.grid_forget()
+        self.dark_theme = tkinter.StringVar(value="off")
+        self.select_theme = CTk.CTkCheckBox(
+            master=self.setting_frame,
+            text="Темная тема",
+            command=self.set_theme_mode,
+            variable=self.dark_theme,
+            onvalue="on",
+            offvalue="off",
+        )
+        self.select_theme.grid(row=0, column=0)
+        self.color_theme_var = tkinter.StringVar(value="blue")
+        self.color_theme_box = CTk.CTkOptionMenu(
+            master=self.setting_frame,
+            values=["blue", "dark-blue", "green"],
+            command=lambda x=self.color_theme_var.get(): self.set_color_theme(x),
+            variable=self.color_theme_var,
+        )
+        # Themes: blue (default), dark-blue, green
+        self.color_theme_box.grid(row=1, column=0)
+        self.color_theme_box.set("blue")  # set initial value
+
+        self.exit_to_main_button = CTk.CTkButton(
+            master=self.setting_frame,
+            text="Выйти в меню",
+            command=self.open_main,
+            fg_color="black",
+        )
+        self.exit_to_main_button.grid(row=4, column=0, pady=(40, 0))
+
     def set_quest_and_answer(self):
         """Обновление текста вариантов ответа и изображения на форме викторины"""
         if self.quest_processor.can_get_question():
@@ -251,40 +314,30 @@ class QuizApp(CTk.CTk):
         )
         self.quize_frame.grid_forget()
         self.result_frame.grid_forget()
+        self.setting_frame.grid_forget()
         self.quest_processor.reset_quiz()
 
     def open_setting(self):
         """Открытие фрейма настроек"""
+        self.main_frame.grid_forget()
+        self.setting_frame.grid(row=1, column=0)
         pass
+
+    def set_theme_mode(self):
+        if self.dark_theme.get() == "off":
+            CTk.set_appearance_mode("light")  # Modes: system (default), light, dark
+        elif self.dark_theme.get() == "on":
+            CTk.set_appearance_mode("dark")
+
+    def set_color_theme(self, style):
+        # TODO: fix color theme
+        print(style)
+        CTk.set_default_color_theme(style)  # Themes: blue (default), dark-blue, green
 
     def open_select_quiz(self):
         """Переход на форму выбора викторины из списка, загруженного из json (init_select_quiz)"""
         self.main_frame.grid_forget()
         self.select_quiz_frame.grid(row=1, column=0)
-
-    def init_result_frame(self):
-        """Создаем фрейм результатов"""
-        self.result_frame = CTk.CTkFrame(master=self, fg_color="transparent")
-        self.result_frame.grid(row=1, column=0, padx=(20, 20), sticky="NSEW")
-        self.result_frame.grid_anchor(
-            "center"  # Вырваниваем все элементы внутри фрейма по центру
-        )
-        self.result_frame.grid_forget()
-
-        self.result_label = CTk.CTkLabel(
-            master=self.result_frame,
-            text=f"Ваш результат:{self.quest_processor.statistics[0]} из {sum(self.quest_processor.statistics)}",
-            font=(CTk.CTkFont(size=20)),
-        )
-        self.result_label.grid(row=0, column=0)
-
-        self.exit_to_main_button = CTk.CTkButton(
-            master=self.result_frame,
-            text="Выйти в меню",
-            command=self.open_main,
-            fg_color="black",
-        )
-        self.exit_to_main_button.grid(row=4, column=0, pady=(40, 0))
 
     def open_result(self):
         """Переход на фрейм результатов прохождения викторины"""

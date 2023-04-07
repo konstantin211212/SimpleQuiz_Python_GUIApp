@@ -57,6 +57,9 @@ class QuestProcess:
         else:
             return 0
 
+    def get_statistic(self):
+        pass
+
     def get_image(self):
         if len(self.images) - 1 >= self.number_question:
             return self.images[self.number_question]

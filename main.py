@@ -33,6 +33,7 @@ class QuizApp(CTk.CTk):
         self.init_select_quiz_frame()
         self.init_quiz_frame()
         self.init_setting_frame()
+        self.init_account_frame()
 
     def init_main_frame(self):
         """Создаем главный фрейм с кнопками управления"""
@@ -56,10 +57,15 @@ class QuizApp(CTk.CTk):
         )
         self.setting_button.grid(row=1, column=0, pady=(30, 30))
 
+        self.setting_button = CTk.CTkButton(
+            master=self.main_frame, text="Личный кабинет", command=self.open_account
+        )
+        self.setting_button.grid(row=2, column=0, pady=(30, 30))
+
         self.exit_button = CTk.CTkButton(
             master=self.main_frame, text="Выход", command=self.destroy
         )
-        self.exit_button.grid(row=2, column=0, pady=(30, 30))
+        self.exit_button.grid(row=3, column=0, pady=(30, 30))
 
     def init_quiz_frame(self):
         """Создаем фрейм викторины с вопросом и кнопками выбора ответа"""
@@ -185,6 +191,41 @@ class QuizApp(CTk.CTk):
     def init_questions_json(self):
         """Создание класса-обработчика для вопросов из json файла"""
         self.quest_processor = QuestProcess()
+
+    def init_account_frame(self):
+        """Создаем фрейм викторины с вопросом и кнопками выбора ответа"""
+        self.account_frame = CTk.CTkFrame(master=self, fg_color="transparent")
+        self.account_frame.grid(row=1, column=0, padx=(20, 20), sticky="NSEW")
+        self.account_frame.grid_anchor(
+            "center"  # Вырваниваем все элементы внутри фрейма по центру
+        )
+        self.account_frame.grid_forget()
+
+        self.account_statistic = CTk.CTkTextbox(master=self.account_frame)
+        self.account_statistic.grid(row=0, column=0)
+
+        self.account_statistic.insert(
+            "0.0", "new text to insert"
+        )  # insert at line 0 character 0
+        text = self.account_statistic.get(
+            "0.0", "end"
+        )  # get text from line 0 character 0 till the end
+        self.account_statistic.delete("0.0", "end")  # delete all text
+        self.account_statistic.configure(
+            state="disabled"
+        )  # configure textbox to be read-only
+
+        self.exit_to_main_button = CTk.CTkButton(
+            master=self.account_frame,
+            text="Выйти в меню",
+            command=self.open_main,
+            fg_color="black",
+        )
+        self.exit_to_main_button.grid(row=4, column=0, pady=(40, 0))
+
+    def open_account(self):
+        self.account_frame.grid(row=1, column=0)
+        self.main_frame.grid_forget()
 
     def init_result_frame(self):
         """Создаем фрейм результатов"""
@@ -316,6 +357,7 @@ class QuizApp(CTk.CTk):
         self.result_frame.grid_forget()
         self.setting_frame.grid_forget()
         self.quest_processor.reset_quiz()
+        self.account_frame.grid_forget()
 
     def open_setting(self):
         """Открытие фрейма настроек"""
